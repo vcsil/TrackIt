@@ -7,7 +7,7 @@ export const AuthProvider = (props) => {
     const [user, setUser] = useState({
         id: '',
         name: "",
-        image: '',
+        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/StadeFranceNationsLeague2018.jpg/800px-StadeFranceNationsLeague2018.jpg',
         token: '',
         done: 0,
         entrou: false

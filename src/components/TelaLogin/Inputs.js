@@ -6,8 +6,6 @@ import { AuthContext } from '../../providers/Auth.js';
 import { Bars } from  'react-loader-spinner'
 
 
-
-
 function Inputs() {
     const { user, setUser } = React.useContext(AuthContext);
 
@@ -18,14 +16,12 @@ function Inputs() {
     const [carregando, setCarregando] = useState(false);
 
     function entrando( { id, name, image, token } ) {
-        console.log(id, name, image, token)
         setUser({...user, 
             id: id, 
             name: name, 
             image: image, 
             token: token,
             entrou: true});
-        console.log(user)
         setCarregando(false);
         navigate("/hoje");
     }

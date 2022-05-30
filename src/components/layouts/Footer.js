@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import React from "react"
 import  {  CircularProgressbar, buildStyles }  from  'react-circular-progressbar' ; 
 import  'react-circular-progressbar/dist/styles.css' ;
@@ -13,25 +14,28 @@ function Footer( props ) {
 
     return (
         <Menu entrou={entrou}>
-            <p>Hábitos</p>
-            <p>Histórico</p>
+            <Link to={'/habitos'} style={{ textDecoration: 'none' }}><p>Hábitos</p></Link>
+            <Link to={'/historico'} style={{ textDecoration: 'none' }}><p>Histórico</p></Link>
             <Bolota>
-                <CircularProgressbar
-                    value={user.done}
-                    text={"Hoje"}
-                    background
-                    backgroundPadding={6}
-                    styles={buildStyles({
-                      backgroundColor: "var(--cor-azul-claro)",
-                      textColor: "#fff",
-                      pathColor: "#fff",
-                      trailColor: "transparent",
-                      lineHeight: "22px",
-                      fontWeight: "400",
-                      fontSize: "17.976px"
-                    })}
-                />
+                <Link to={'/hoje'} style={{ textDecoration: 'none' }}>
+                    <CircularProgressbar
+                        value={user.done}
+                        text={"Hoje"}
+                        background
+                        backgroundPadding={6}
+                        styles={buildStyles({
+                        backgroundColor: "var(--cor-azul-claro)",
+                        textColor: "#fff",
+                        pathColor: "#fff",
+                        trailColor: "transparent",
+                        lineHeight: "22px",
+                        fontWeight: "400",
+                        fontSize: "17.976px"
+                        })}
+                    />
+                </Link>
             </Bolota>
+            
         </ Menu>
     );
 }

@@ -1,13 +1,18 @@
+import React from 'react';
+import { Link } from "react-router-dom";
 import styled from 'styled-components';
+import { AuthContext } from '../../providers/Auth.js';
 
 function Header( props ) {
+    const { user } = React.useContext(AuthContext);
+    const imagem = user.image
 
     const { entrou } = props;
 
     return (
         <Titulo entrou={entrou} >
-            <h1>TrackIt</h1>
-            <ImgPerfil />
+            <Link to={'/hoje'} style={{ textDecoration: 'none' }}><h1>TrackIt</h1></Link>
+            <ImgPerfil src={imagem} />
         </Titulo>
     );
 }
@@ -42,11 +47,11 @@ const Titulo = styled.header`
     }
 `;
 
-const ImgPerfil = styled.div`
+const ImgPerfil = styled.img`
     width: 50px;
     height: 50px;
-    background-color: gray;
     border-radius: 100px;
+    object-fit: cover;
 `
 
 export default Header;

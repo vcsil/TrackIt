@@ -1,5 +1,10 @@
-import { useState } from "react"
 import styled from "styled-components"
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { AuthContext } from '../../providers/Auth.js';
+import { Bars } from  'react-loader-spinner'
+
 import DiasSemana from "./DiasSemana";
 
 const dias = [
@@ -14,18 +19,53 @@ const dias = [
 
 function AdicionarHabito( props ) {
 
+    const { user } = React.useContext(AuthContext);
 
     const { novoHabito, setNovoHabito } = props;
 
     const [nomeDoHabito, setNomeDoHabito] = useState("");
     const [diaSelecionado, setDiaSelecionado] = useState([...dias]);
     const [diasDoHabito, setDiasDoHabito] = useState([]);
+    const [carregando, setCarregando] = useState(false);
+
 
     function cancelar() {
         // dias.forEach((i) => {i.selecionado = false} );
         // setDiaSelecionado(dias);
         // setNomeDoHabito("");
         setNovoHabito(!novoHabito);
+    }
+
+    function reinicia() {
+        dias.forEach((i) => {i.selecionado = false} );
+        setDiaSelecionado(dias);
+        setNomeDoHabito("");
+        setNovoHabito(!novoHabito);
+    }
+    
+    function salvaHabito(){
+        setCarregando(true);
+
+        const body = {
+            name: nomeDoHabito,
+            days: diasDoHabito
+        };
+        const config = {
+            headers: {
+                "Authorization": `Bearer ${user.token}`
+            }
+        };
+        
+        const URL = "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits";
+        const promise = axios.post(URL, body, config);
+        promise.then(response => {
+            setCarregando(false);
+            reinicia()
+        })
+        promise.catch(err => {
+            setCarregando(false);
+            alert(err.response.statusText)
+        });
     }
 
     return (
@@ -37,16 +77,30 @@ function AdicionarHabito( props ) {
                     id="text"
                     value={nomeDoHabito}
                     onChange={(e) => setNomeDoHabito(e.target.value)}
+                    disabled={carregando}
                     required></input>
                 
                 <DiasSemana diaSelecionado={diaSelecionado} 
                     setDiaSelecionado={setDiaSelecionado}
                     diasDoHabito={diasDoHabito}
-                    setDiasDoHabito={setDiasDoHabito}/>
+                    setDiasDoHabito={setDiasDoHabito}
+                    disabled={carregando}/>
 
                 <Botoes>
                     <p onClick={() => cancelar()}>Cancelar</p>
-                    <button> <p>Salvar</p> </button>
+                    <button onClick={() => salvaHabito()}disabled={carregando}> 
+                    {
+                        carregando ? 
+                        <Bars
+                            height="40"
+                            width="40"
+                            color='white'
+                            ariaLabel='loading'
+                        />
+                        :
+                        <p>Salvar</p>
+                    }
+                    </button>
                 </Botoes>
             </ContainerHabitoNovo>
         </HabitoNovo>
@@ -94,6 +148,9 @@ const Botoes = styled.div`
         width: 84px;
         height: 35px;
         cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 
     button > p{
@@ -101,6 +158,7 @@ const Botoes = styled.div`
         font-size: 15.976px;
         line-height: 20px;
         text-align: center;
+        margin-left: 20px;
         color: #FFFFFF;
     }
 `
