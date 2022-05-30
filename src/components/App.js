@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import React, {useState} from "react";
+import React from "react";
 
 import Reset from '../assets/styles/reset.js';
 import GlobalStyle from '../assets/styles/globalStyles.js';
@@ -16,7 +16,7 @@ function App() {
 
     const { user } = React.useContext(AuthContext);
 
-    const [entrou, setEntrou] = useState(true);
+    const entrou = user.entrou;
 
     return (
         <BrowserRouter>
@@ -26,8 +26,8 @@ function App() {
             <Header entrou={entrou}/>
 
             <Routes>
-                <Route path='/' element={<TelaLogin setEntrou={setEntrou}/>} />
-                <Route path='/cadastro' element={<TelaSingUp setEntrou={setEntrou}/>} />
+                <Route path='/' element={<TelaLogin />} />
+                <Route path='/cadastro' element={<TelaSingUp />} />
                 
                 <Route path='/hoje' element={<TelaHoje />} />
                 <Route path='/habitos' element={<TelaMeusHabitos />} />

@@ -5,11 +5,7 @@ import { Link } from "react-router-dom";
 import logo from '../../assets/image/logo.png'
 import Inputs from './Inputs'
 
-function TelaLogin( props ) {
-    const { setEntrou } = props;
-
-    setEntrou(false)
-
+function TelaLogin(  ) {
     return (
         <>
             <Login>
@@ -17,7 +13,7 @@ function TelaLogin( props ) {
                     <img src={logo} alt="logo"/>
                     <h1>TrackIt</h1>
                 </Logotipo>
-                <Inputs setEntrou={setEntrou}/>
+                <Inputs />
                 <Link to={"/"} style={{ textDecoration: 'none' }}>
                     <LogSigIn>Já tem uma conta? Faça login!</LogSigIn>
                 </Link>

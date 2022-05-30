@@ -1,20 +1,50 @@
 import styled from "styled-components";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { AuthContext } from '../../providers/Auth.js';
+import { Bars } from  'react-loader-spinner'
 
 
-function Inputs( props ) {
-    const { setEntrou } = props;
+
+
+function Inputs() {
+    const { user, setUser } = React.useContext(AuthContext);
 
     const navigate = useNavigate();
 
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [carregando, setCarregando] = useState(false);
+
+    function entrando( { id, name, image, token } ) {
+        console.log(id, name, image, token)
+        setUser({...user, 
+            id: id, 
+            name: name, 
+            image: image, 
+            token: token,
+            entrou: true});
+        console.log(user)
+        setCarregando(false);
+        navigate("/hoje");
+    }
 
     function SubmitData(event) {
         event.preventDefault();
-        setEntrou(true);
-        navigate("/hoje");
+        setCarregando(true);
+
+        const URL = "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/auth/login";
+        const promise = axios.post(URL, {
+            email,
+            password
+        });
+        promise.then(response => {
+            entrando(response.data);
+        })
+        promise.catch(err => {
+            alert(err.response.statusText)
+        });
     }
 
     return (
@@ -26,6 +56,7 @@ function Inputs( props ) {
                     id="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    disabled={carregando}
                     required></input>
                 <input
                     placeholder="senha"
@@ -33,8 +64,22 @@ function Inputs( props ) {
                     id="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    disabled={carregando}
                     required></input>
-                <Botao type="submit"> <p>Entrar</p> </Botao>
+                <Botao type="submit"
+                    disabled={carregando}> 
+                    {
+                        carregando ? 
+                        <Bars
+                            height="40"
+                            width="40"
+                            color='white'
+                            ariaLabel='loading'
+                        />
+                        :
+                        <p>Entrar</p>
+                    }
+                </Botao>
             </form>
         </>
     );
@@ -44,6 +89,9 @@ const Botao = styled.button`
     width: 100%;
     height: 46px;
     margin-bottom: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 `
 
 export default Inputs;
