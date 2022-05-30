@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 export const AuthContext = React.createContext({});
 
@@ -12,6 +12,21 @@ export const AuthProvider = (props) => {
         done: 0,
         entrou: false
     })
+
+    useEffect(() => {
+        if (localStorage.getItem("usuario")) {
+                const usuario = localStorage.getItem("usuario");
+                const objetoUsuario = JSON.parse(usuario);
+                setUser({...user, 
+                        id: objetoUsuario.id,
+                        name: objetoUsuario.name,
+                        entrou: objetoUsuario.entrou,
+                        image: objetoUsuario.image,
+                        token: objetoUsuario.token});
+            }
+    }, [])
+
+    
 
     return (
         <AuthContext.Provider value={{user, setUser}}>

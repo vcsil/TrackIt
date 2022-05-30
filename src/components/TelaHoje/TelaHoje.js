@@ -7,29 +7,6 @@ import styled from "styled-components";
 import HabitosItem from "./HabitosItem";
 import { AuthContext } from '../../providers/Auth.js';
 
-const tarefas = [
-    {
-        "id": 0,
-        "name": "Ler 1 capítulo de livro",
-        "done": true,
-        "currentSequence": 3,
-        "highestSequence": 5
-    },
-    {
-        "id": 1,
-        "name": "Ler 1 capítulo de livro",
-        "done": true,
-        "currentSequence": 3,
-        "highestSequence": 3
-    },
-    {
-        "id": 2,
-        "name": "Ler 1 capítulo de livro",
-        "done": false,
-        "currentSequence": 1,
-        "highestSequence": 5
-    },
-]
 
 const semana = {
     0: 'Domingo',

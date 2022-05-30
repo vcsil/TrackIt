@@ -1,18 +1,27 @@
 import React from 'react';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styled from 'styled-components';
 import { AuthContext } from '../../providers/Auth.js';
 
 function Header( props ) {
-    const { user } = React.useContext(AuthContext);
+    const navigate = useNavigate();
+
+
+    const { user, setUser } = React.useContext(AuthContext);
     const imagem = user.image
 
     const { entrou } = props;
 
+    function Sair() {
+        setUser({...user, entrou: false})
+        localStorage.removeItem("usuario");
+        navigate("/")
+    }
+
     return (
         <Titulo entrou={entrou} >
             <Link to={'/hoje'} style={{ textDecoration: 'none' }}><h1>TrackIt</h1></Link>
-            <ImgPerfil src={imagem} />
+            <ImgPerfil src={imagem} onClick={() => Sair()}/>
         </Titulo>
     );
 }

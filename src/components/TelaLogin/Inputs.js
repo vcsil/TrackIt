@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { AuthContext } from '../../providers/Auth.js';
@@ -14,6 +14,20 @@ function Inputs() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [carregando, setCarregando] = useState(false);
+    
+    function entraLogo() {
+        // const usuario = localStorage.getItem("usuario");
+        // const objetoUsuario = JSON.parse(usuario);
+        // setUser({...user, 
+        //         id: objetoUsuario.id,
+        //         name: objetoUsuario.name,
+        //         entrou: objetoUsuario.entrou,
+        //         image: objetoUsuario.image,
+        //         token: objetoUsuario.token});
+        setCarregando(false);
+        navigate("/hoje");
+
+    }
 
     function entrando( { id, name, image, token } ) {
         setUser({...user, 
@@ -23,6 +37,16 @@ function Inputs() {
             token: token,
             entrou: true});
         setCarregando(false);
+        
+        const dadosSerializados = JSON.stringify({
+            id: id, 
+            name: name, 
+            image: image, 
+            token: token,
+            entrou: true
+        });
+        localStorage.setItem("usuario", dadosSerializados);
+        
         navigate("/hoje");
     }
 
@@ -42,6 +66,13 @@ function Inputs() {
             alert(err.response.statusText)
         });
     }
+
+    useEffect(() => {
+        if ((localStorage.getItem("usuario"))) {
+                entraLogo();
+            }
+    }, [])
+    
 
     return (
         <>
