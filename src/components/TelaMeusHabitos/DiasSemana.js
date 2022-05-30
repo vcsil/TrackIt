@@ -3,7 +3,7 @@ import Dia from "./ElementoSemana";
 
 function DiasSemana( props ) {
 
-    const { diaSelecionado, setDiaSelecionado, diasDoHabito, setDiasDoHabito } = props
+    const { diaSelecionado, setDiaSelecionado, diasDoHabito, setDiasDoHabito, desabilitado } = props
 
     function marcaDia( id ) {
         const objetoTodosDias = diaSelecionado; // [{..},{..},{..}...]
@@ -17,7 +17,6 @@ function DiasSemana( props ) {
         } else {
             setDiasDoHabito(diasDoHabito.filter( i => i !== id))
         }
-
         setDiaSelecionado([...objetoTodosDias])
     }
 
@@ -25,7 +24,11 @@ function DiasSemana( props ) {
         <Semana>
             {diaSelecionado.map(dia => 
                 <Dia key={dia.id}
-                    onClick={() => marcaDia(dia.id)}
+                    onClick={() => {
+                        if (!desabilitado) {
+                            marcaDia(dia.id)
+                        }
+                    }}
                     selecionado={dia.selecionado}> 
 
                     <p>{dia.sigla}</p>

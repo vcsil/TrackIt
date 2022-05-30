@@ -1,4 +1,7 @@
 import React, { useEffect, useState } from "react";
+import dayjs from "dayjs";
+import axios from "axios";
+import { Bars } from  'react-loader-spinner'
 
 import styled from "styled-components";
 import HabitosItem from "./HabitosItem";
@@ -28,9 +31,23 @@ const tarefas = [
     },
 ]
 
+const semana = {
+    0: 'Domingo',
+    1: 'Segunda',
+    2: 'Terça',
+    3: 'Quarta',
+    4: 'Quinta',
+    5: 'Sexta',
+    6: 'Sábado',
+}
+
 function TelaHoje() {
 
-    const [ check, setCheck ] = useState([...tarefas]);
+    const diaMes = dayjs().locale('pt-br').format('DD/MM');
+    const diaSemana = dayjs().day();
+
+    const [ check, setCheck ] = useState([]);
+    const [ carregando, setCarregando ] = useState(false);
     const { user, setUser } = React.useContext(AuthContext);
 
     const totalHabitos = check.length;
@@ -39,22 +56,72 @@ function TelaHoje() {
 
     function deixarVerde(id) {
         let objetoTarefas = [...check];
+
+        let concluida;
+
         objetoTarefas.forEach( tarefa => {
                                     if (tarefa.id === id) {
-                                        tarefa.done = !tarefa.done
+                                        tarefa.done = !tarefa.done;
+                                        concluida = !tarefa.done;
                                     }
-        })
-        setCheck([...objetoTarefas]);
-    }
+        });
+
+        const config = {
+            headers: {
+                "Authorization": `Bearer ${user.token}`
+            }
+        };
+        
+        if ( !concluida ) {
+            const URL = `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${id}/check`;
+            const promise = axios.post(URL, objetoTarefas, config);
+            promise.then(response => {
+                setCheck([...objetoTarefas]);
+            })
+            promise.catch(err => {
+                alert(err.response.statusText)
+            });
+        } else {
+            const URL = `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${id}/uncheck`;
+            const promise = axios.post(URL, objetoTarefas, config);
+            promise.then(response => {
+                setCheck([...objetoTarefas]);
+            })
+            promise.catch(err => {
+                alert(err.response.statusText)
+            });
+        }
+        
+
+    };
 
     useEffect(() => {
         setUser({...user, done: porcentagemFeita});
+
+        setCarregando(true);
+
+        const config = {
+            headers: {
+                "Authorization": `Bearer ${user.token}`
+            }
+        };
+
+        const URL = "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today";
+        const promise = axios.get(URL, config);
+        promise.then(response => {
+            setCarregando(false);
+            setCheck(response.data)
+        })
+        promise.catch(err => {
+            setCarregando(false);
+            alert(err.response.statusText)
+        });
     }, [porcentagemFeita])
 
     return (
         <main>
             <Titulo feito={realizadosHabitos}>
-                <h2 className="titulo">Segunda, 17/05</h2>
+                <h2 className="titulo">{semana[diaSemana]}, {diaMes}</h2>
                 {
                     realizadosHabitos ? 
                     <p className="paragrafo">{porcentagemFeita}% dos hábitos concluídos</p>
@@ -64,7 +131,17 @@ function TelaHoje() {
             </Titulo>
             <HabitosLista>
                 {
-                    tarefas.map(i => 
+                    carregando ? 
+                    <Centralizar>
+                        <Bars
+                            height="60"
+                            width="66"
+                            color='white'
+                            ariaLabel='loading'
+                        />
+                    </Centralizar>
+                    :
+                    check.map(i => 
                         <HabitosItem key={i.id}
                             id={i.id}
                             name={i.name}
@@ -92,6 +169,12 @@ const Titulo = styled.div`
 `
 
 const HabitosLista = styled.ul`
+`
+
+const Centralizar = styled.div`
+    position: fixed;
+    top: 340px;
+    left: 160px;
 `
 
 export default TelaHoje;

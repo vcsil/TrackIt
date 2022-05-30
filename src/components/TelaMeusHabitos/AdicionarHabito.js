@@ -1,6 +1,5 @@
 import styled from "styled-components"
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { AuthContext } from '../../providers/Auth.js';
 import { Bars } from  'react-loader-spinner'
@@ -21,7 +20,7 @@ function AdicionarHabito( props ) {
 
     const { user } = React.useContext(AuthContext);
 
-    const { novoHabito, setNovoHabito } = props;
+    const { novoHabito, setNovoHabito, atualiza, setAtualiza } = props;
 
     const [nomeDoHabito, setNomeDoHabito] = useState("");
     const [diaSelecionado, setDiaSelecionado] = useState([...dias]);
@@ -41,35 +40,44 @@ function AdicionarHabito( props ) {
         setDiaSelecionado(dias);
         setNomeDoHabito("");
         setNovoHabito(!novoHabito);
+        setDiasDoHabito([]);
+        setAtualiza(!atualiza);
     }
     
-    function salvaHabito(){
-        setCarregando(true);
-
-        const body = {
-            name: nomeDoHabito,
-            days: diasDoHabito
-        };
-        const config = {
-            headers: {
-                "Authorization": `Bearer ${user.token}`
-            }
-        };
+    function salvaHabito(event){
+        event.preventDefault();
         
-        const URL = "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits";
-        const promise = axios.post(URL, body, config);
-        promise.then(response => {
-            setCarregando(false);
-            reinicia()
-        })
-        promise.catch(err => {
-            setCarregando(false);
-            alert(err.response.statusText)
-        });
-    }
+        if (diasDoHabito.length>0 && nomeDoHabito.length > 0) {
+            setCarregando(true);
+
+            const body = {
+                name: nomeDoHabito,
+                days: diasDoHabito
+            };
+            const config = {
+                headers: {
+                    "Authorization": `Bearer ${user.token}`
+                }
+            };
+            
+            const URL = "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits";
+            const promise = axios.post(URL, body, config);
+            promise.then(response => {
+                setCarregando(false);
+                reinicia()
+            })
+            promise.catch(err => {
+                setCarregando(false);
+                alert(err.response.statusText)
+            });
+        } else {
+        }
+        
+    };
+
 
     return (
-        <HabitoNovo ativo={novoHabito} >
+        <HabitoNovo ativo={novoHabito} onSubmit={salvaHabito}>
             <ContainerHabitoNovo ativo={novoHabito} className="boxInputs">
                 <input
                     placeholder="nome do hábito"
@@ -84,16 +92,17 @@ function AdicionarHabito( props ) {
                     setDiaSelecionado={setDiaSelecionado}
                     diasDoHabito={diasDoHabito}
                     setDiasDoHabito={setDiasDoHabito}
-                    disabled={carregando}/>
+                    desabilitado={carregando}/>
 
                 <Botoes>
                     <p onClick={() => cancelar()}>Cancelar</p>
-                    <button onClick={() => salvaHabito()}disabled={carregando}> 
+                    <button type="submit" 
+                        disabled={carregando}> 
                     {
                         carregando ? 
                         <Bars
-                            height="40"
-                            width="40"
+                            height="30"
+                            width="36"
                             color='white'
                             ariaLabel='loading'
                         />

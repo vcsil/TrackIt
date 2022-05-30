@@ -1,4 +1,6 @@
 import React, { useState }  from "react";
+import axios from "axios";
+import { AuthContext } from '../../providers/Auth.js';
 
 import styled from "styled-components";
 import Dia from "./ElementoSemana";
@@ -17,7 +19,9 @@ const dias = [
 
 function ListarHabitos( props ) {
 
-    const { id, name, days, meusHabitos, setMeusHabitos } = props
+    const { user } = React.useContext(AuthContext);
+
+    const { id, name, days,  atualiza, setAtualiza, tamanho } = props  //meusHabitos, setMeusHabitos,
 
     const [mostraAviso, setMostraAviso] = useState([]);
 
@@ -32,7 +36,24 @@ function ListarHabitos( props ) {
     }
 
     function apaga(id) {
-        setMeusHabitos(meusHabitos.filter(habito => habito.id !== id));
+        // setMeusHabitos(meusHabitos.filter(habito => habito.id !== id));
+
+        const config = {
+            headers: {
+                "Authorization": `Bearer ${user.token}`
+            }
+        };
+
+        const URL = `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${id}`;
+        const promise = axios.delete(URL, config);
+        promise.then(response => {
+            console.log(response.data)
+            setAtualiza(!atualiza)
+        })
+        promise.catch(err => {
+            alert(err.response.statusText)
+        });
+
     }
 
     function nada() {
@@ -40,7 +61,7 @@ function ListarHabitos( props ) {
     }
 
     return (
-        <ContainerHabito>
+        <ContainerHabito tamanho={tamanho}>
             <Habito>
                 <p>{name}</p>
                 <ion-icon name="trash-outline" 
@@ -71,6 +92,10 @@ const ContainerHabito = styled.div`
     border-radius: 5px;
     padding: 12px 10px 16px 16px;
     margin-bottom: 10px;
+
+    &:nth-child(${props => props.tamanho+2}) {
+        margin-bottom: 112px;
+    }
 `
 
 const Habito = styled.div`
